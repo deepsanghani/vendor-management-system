@@ -36,4 +36,23 @@ public class PurchaseOrderController {
             return new ResponseEntity<>("Not found purchase Order", HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping("api/purchase_orders/{po_id}")
+    public ResponseEntity<?> updatePurchaseOrder(@PathVariable String po_id, @RequestBody PurchaseOrder purchaseOrder){
+        if(purchaseOrderService.updatePurchaseOrderById(po_id, purchaseOrder)) {
+            return new ResponseEntity<>("Updated Data Successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Not found purchase Order", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("api/purchase_orders/{po_id}")
+    public ResponseEntity<?> deletePurchaseOrder(@PathVariable String po_id){
+        if(purchaseOrderService.deletePurchaseOrderById(po_id)){
+            return new ResponseEntity<>("Deleted Data Successfully", HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>("Data Not Found", HttpStatus.BAD_REQUEST);t
+        }
+    }
 }
