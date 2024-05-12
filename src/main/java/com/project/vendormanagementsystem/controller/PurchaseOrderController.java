@@ -1,5 +1,7 @@
 package com.project.vendormanagementsystem.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.project.vendormanagementsystem.entity.PurchaseOrder;
 import com.project.vendormanagementsystem.service.PurchaseOrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -52,7 +57,19 @@ public class PurchaseOrderController {
             return new ResponseEntity<>("Deleted Data Successfully", HttpStatus.OK);
         }
         else{
-            return new ResponseEntity<>("Data Not Found", HttpStatus.BAD_REQUEST);t
+            return new ResponseEntity<>("Data Not Found", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("api/purchase_orders/{po_id}/acknowledge")
+    public ResponseEntity<?> updateAcknowledgement(@PathVariable String po_id, @RequestBody String acknowledgmentTime) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> data = objectMapper.readValue(acknowledgmentTime, new TypeReference<Map<String,Object>>() {});
+        LocalDateTime dateTime = LocalDateTime.parse((String)data.get("acknowledgment_time"));
+        if(purchaseOrderService.updateAcknowledgementTime(po_id, dateTime)){
+            return new ResponseEntity<>("Updated Acknowledge Time Successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Purchase Order Not found", HttpStatus.BAD_REQUEST);
         }
     }
 }
